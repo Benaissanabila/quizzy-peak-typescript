@@ -52,7 +52,7 @@ export default class Leaderboard {
      * @returns {LeaderboardEntry[]} - An array of LeaderboardEntry objects representing the top scores.
      */
     getTopScoresForCategory(category: string, numberOfEntries: number): LeaderboardEntry[] {
-        return (this.scores.get(category) || []).slice(0, numberOfEntries);
+        return (this.scores.get(category)?.sort((a, b) => b.score - a.score) || []).slice(0, numberOfEntries);
     }
 
     /**
