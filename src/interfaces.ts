@@ -22,3 +22,4 @@ interface LeaderboardEntry {
     score: number;
     category?: string;
 }
+//const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(); expect(consoleWarnSpy).not.toHaveBeenCalled();

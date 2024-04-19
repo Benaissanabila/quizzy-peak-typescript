@@ -1,4 +1,6 @@
-import Leaderboard from "../Leaderboard"; // Importez votre classe Leaderboard depuis votre fichier source
+import Leaderboard from "../Leaderboard";
+
+
 
 describe('Leaderboard', () => {
     let leaderboard: Leaderboard;
@@ -6,35 +8,73 @@ describe('Leaderboard', () => {
     beforeEach(() => {
         leaderboard = new Leaderboard();
     });
+describe('addScore',()=>{
+    it('devrait ajouter un score pour une catégorie et un utilisateur donnés', () => {
+        leaderboard.addScore('Math', 'jean', 100);
+        const topScores = leaderboard.getTopScoresForCategory('Math', 1);
+        expect(topScores.length).toBe(1);
+        expect(topScores[0].username).toBe('jean');
+        expect(topScores[0].score).toBe(100);
+    });
 
+    it('devrait mettre à jour un score si un score plus élevé est ajouté pour le même utilisateur dans la même catégorie', () => {
+        leaderboard.addScore('category2', 'marie', 50);
+        leaderboard.addScore('category2', 'marie', 70);
+        const topScores = leaderboard.getTopScoresForCategory('category2', 1);
+        expect(topScores.length).toBe(1);
+        expect(topScores[0].username).toBe('marie');
+        expect(topScores[0].score).toBe(70);
+    });
+
+})
     describe('getUserScores', () => {
-        it('should return leaderboard scores for a specific user', () => {
-            leaderboard.addScore('category1', 'user1', 100);
-            leaderboard.addScore('category2', 'user1', 90);
-            expect(leaderboard.getUserScores('user1')).toEqual([
-                { username: 'user1', score: 100, category: 'category1' },
-                { username: 'user1', score: 90, category: 'category2' }
-            ]);
+       it('devrait retourner les scores de l\'utilisateur spécifié', () => {
+                leaderboard = new Leaderboard();
+                leaderboard.addScore('Math', 'user1', 100);
+                leaderboard.addScore('Math', 'user2', 150);
+                leaderboard.addScore('Science', 'user1', 200);
+                leaderboard.addScore('Science', 'user3', 120);
+                const userScores = leaderboard.getUserScores('user1');
+                // On s'attend à ce que les scores de user1 pour les catégories Math et Science soient renvoyés
+                expect(userScores.length).toEqual(2);
+                expect(userScores).toContainEqual({ username: 'user1', score: 100, category: 'Math' });
+           expect(userScores[0].category).toBe(  'Science');
+                expect(userScores).toContainEqual({ username: 'user1', score: 200, category: 'Science' });
+            });
+        it('devrait récupérer les scores du classement pour un utilisateur spécifique', () => {
+            leaderboard.addScore('category4', 'user6', 300);
+            leaderboard.addScore('category5', 'user6', 250);
+            leaderboard.addScore('category6', 'user6', 220);
+            const userScores = leaderboard.getUserScores('user6');
+            expect(userScores.length).toBe(3);
+            expect(userScores[0].category).toBe('category4');
+            expect(userScores[0].score).toBe(300);
         });
 
-        it('should return an empty array if user has no scores', () => {
-            expect(leaderboard.getUserScores('nonexistent_user')).toEqual([]);
+        });
+    describe('getTopScoresForCategory', () => {
+        it('devrait récupérer les meilleurs scores pour une catégorie', () => {
+            leaderboard.addScore('category3', 'user3', 200);
+            leaderboard.addScore('category3', 'user4', 150);
+            leaderboard.addScore('category3', 'user5', 120);
+            const topScores = leaderboard.getTopScoresForCategory('category3', 2);
+            expect(topScores.length).toBe(2);
+            expect(topScores[0].username).toBe('user3');
+            expect(topScores[0].score).toBe(200);
+            expect(topScores[1].username).toBe('user4');
+            expect(topScores[1].score).toBe(150);
         });
     });
 
 
-    /*describe('addScore', () => {
-        it('should return an empty array for new categories', () => {
-            expect(leaderboard).toEqual([]);
-        });
-        it('should add a new score for a user in a category if no previous score exists',()=>{
-            leaderboard.addScore('categoryA','userA',60)
-            expect(leaderboard).toEqual([{ category: 'categoryA', username:'userA', score: 60 }]);
-        });
-    })
-/*it('should find the user score if it exists in the category')
-        leaderboard.addScore('CategoryA', 'Alice', 90);
-        leaderboard.addScore('CategoryA', 'bob', 80));
-
-    });*/
+    it('devrait renvoyer une représentation sous forme de chaîne correcte d\'une entrée du classement', () => {
+        const entry = { username: 'user7', score: 400, category: 'category7' };
+        const entryString = leaderboard.getEntryString(entry);
+        expect(entryString).toBe("user7 has a score of 400 in category 'category7'.");
+    });
 });
+
+
+
+
+
